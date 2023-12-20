@@ -10,7 +10,9 @@ environment:
 dependencies:
   path_provider: ^2.0.11
   camera: ^0.10.0+3
-  file_picker_cross: 4.4.1
+  file_picker_cross:
+    git:
+      url: https://gitlab.com/FabioZvir/file_picker_cross.git
   msk_utils:
     git:
       url: https://github.com/aynova-tecnologia/msk_utils.git
