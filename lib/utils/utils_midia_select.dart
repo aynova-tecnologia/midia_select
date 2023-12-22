@@ -187,15 +187,19 @@ class UtilsMidiaSelect {
                         if (Navigator.canPop(alertContext)) {
                           Navigator.pop(alertContext);
                         }
-                        XFile? image = await ImagePicker().pickImage(
-                            source: ImageSource.gallery,
-                            maxWidth: maxWidth,
-                            maxHeight: maxHeight,
-                            imageQuality: imageQuality);
-                        if (image != null) {
-                          ItemMidia? item = getItemMidiaImage(path: image.path);
-                          if (item != null) {
-                            midiaAdded.call(item);
+                        List<XFile> images = await ImagePicker().pickMultiImage(
+                          maxWidth: maxWidth,
+                          maxHeight: maxHeight,
+                          imageQuality: imageQuality,
+                        );
+
+                        if (images != null && images.isNotEmpty) {
+                          for (XFile image in images) {
+                            ItemMidia? item =
+                                getItemMidiaImage(path: image.path);
+                            if (item != null) {
+                              midiaAdded.call(item);
+                            }
                           }
                         }
                       },
