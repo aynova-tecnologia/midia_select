@@ -8,11 +8,19 @@ import 'package:msk_utils/msk_utils.dart';
 import 'package:path/path.dart';
 
 class UtilsMidiaSelect {
-  static ItemMidia? getItemMidiaImage(
-      {String? path, String? url, dynamic obj}) {
-    ItemMidia? itemMidia =
-        UtilsMidiaSelect.getItemMidia(path: path, url: url, obj: obj);
+  static ItemMidia? getItemMidiaImage({
+    String? path,
+    String? url,
+    dynamic obj,
+    int? typeImage,
+  }) {
+    ItemMidia? itemMidia = UtilsMidiaSelect.getItemMidia(
+      path: path,
+      url: url,
+      obj: obj,
+    );
     itemMidia?.tipoMidia = TipoMidiaEnum.IMAGEM;
+    itemMidia?.typeImage = typeImage;
     return itemMidia;
   }
 
