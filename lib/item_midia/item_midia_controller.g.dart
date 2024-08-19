@@ -6,10 +6,10 @@ part of 'item_midia_controller.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ItemMidiaController on _ItemMidiaBase, Store {
-  final _$itemAtom = Atom(name: '_ItemMidiaBase.item');
+  late final _$itemAtom = Atom(name: '_ItemMidiaBase.item', context: context);
 
   @override
   ItemMidia? get item {
