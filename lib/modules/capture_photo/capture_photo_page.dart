@@ -20,7 +20,7 @@ class _CapturePhotoPageState extends State<CapturePhotoPage> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final cameras = await availableCameras();
       print(cameras);
       // setState(() {});
