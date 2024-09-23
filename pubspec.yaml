@@ -8,17 +8,17 @@ environment:
 
 dependencies:
   path_provider: ^2.0.11
-  camera: ^0.10.6
+  camera: ^0.11.0+2
   file_picker_cross:
     git:
       url: https://gitlab.com/FabioZvir/file_picker_cross.git
   msk_utils:
     git:
       url: https://github.com/aynova-tecnologia/msk_utils.git
-  image_picker: ^0.8.9
+  image_picker: ^1.1.2 
   flutter_mobx: ^2.0.2
   pinch_zoom_image_last: ^0.4.1
-  carousel_slider: ^4.2.1
+  carousel_slider: ^5.0.0
   cached_network_image: ^3.1.0
   mobx: ^2.0.4
   bloc_pattern: ^3.0.0
