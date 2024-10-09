@@ -109,7 +109,7 @@ class UtilsMidiaSelect {
         builder: (context) => BottomSheet(
           builder: (context) => Column(
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
+            children: [
               tiposMidia.contains(TipoMidiaEnum.IMAGEM)
                   ? ListTile(
                       title: const Text(
@@ -199,7 +199,7 @@ class UtilsMidiaSelect {
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
+            children: [
               ListTile(
                 title: const Text(
                   'Câmera',
@@ -347,7 +347,7 @@ class UtilsMidiaSelect {
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
+            children: [
               ListTile(
                 title: const Text(
                   'Câmera',
