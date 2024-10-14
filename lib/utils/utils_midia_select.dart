@@ -81,6 +81,10 @@ class UtilsMidiaSelect {
     double? maxWidth,
     double? maxHeight,
     bool galeryUniqueImage = false,
+    List<Orientation> allowedPhotoOrientations = const [
+      Orientation.landscape,
+      Orientation.portrait
+    ],
   }) {
     if (tiposMidia.length == 1) {
       switch (tiposMidia.first) {
@@ -92,6 +96,7 @@ class UtilsMidiaSelect {
             maxWidth: maxWidth,
             imageQuality: imageQuality,
             galeryUniqueImage: galeryUniqueImage,
+            allowedPhotoOrientations: allowedPhotoOrientations,
           );
           break;
         case TipoMidiaEnum.VIDEO:
@@ -129,6 +134,7 @@ class UtilsMidiaSelect {
                           maxWidth: maxWidth,
                           imageQuality: imageQuality,
                           galeryUniqueImage: galeryUniqueImage,
+                          allowedPhotoOrientations: allowedPhotoOrientations,
                         );
                       },
                     )
@@ -166,6 +172,10 @@ class UtilsMidiaSelect {
     double? maxHeight,
     int imageQuality = 85,
     bool galeryUniqueImage = false,
+    List<Orientation> allowedPhotoOrientations = const [
+      Orientation.landscape,
+      Orientation.portrait
+    ],
   }) async {
     if (!UtilsPlatform.isMobile) {
       try {
@@ -227,7 +237,9 @@ class UtilsMidiaSelect {
                       } catch (_) {}
                       var res = await Navigation.push(
                         context,
-                        CapturePhotoPage(),
+                        CapturePhotoPage(
+                          allowedPhotoOrientations: allowedPhotoOrientations,
+                        ),
                       );
                       if (res != null) {
                         ItemMidia? item = getItemMidiaImage(
