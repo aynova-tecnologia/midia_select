@@ -38,7 +38,7 @@ abstract class _ItemMidia extends ItemSelect with Store {
   });
 }
 
-enum TipoMidiaEnum { AUDIO, IMAGEM, VIDEO }
+enum TipoMidiaEnum { AUDIO, IMAGEM, VIDEO, ARQUIVO }
 
 int getIntTipoMidia(TipoMidiaEnum tipo) {
   switch (tipo) {
@@ -48,6 +48,8 @@ int getIntTipoMidia(TipoMidiaEnum tipo) {
       return 2;
     case TipoMidiaEnum.AUDIO:
       return 3;
+    case TipoMidiaEnum.ARQUIVO:
+      return 4;
     default:
       return -1;
   }
