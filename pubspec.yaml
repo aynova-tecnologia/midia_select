@@ -9,6 +9,7 @@ environment:
 dependencies:
   path_provider: ^2.0.11
   camera: ^0.11.0+2
+  flutter_pdfview: ^1.4.3
   file_picker_cross:
     git:
       url: https://gitlab.com/FabioZvir/file_picker_cross.git

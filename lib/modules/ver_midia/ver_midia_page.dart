@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:midia_select/models/item_midia.dart';
 import 'package:msk_utils/msk_utils.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart'; // <-- 1. Importe o pacote de PDF
 
 import 'ver_midia_controller.dart';
 import 'ver_midia_module.dart';
@@ -68,7 +69,9 @@ class _VerMidiaPageState extends State<VerMidiaPage> {
                             child: Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Text(
-                                    _controller.itens[realIndex].fileName!)),
+                                  _controller.itens[realIndex].fileName!,
+                                  style: TextStyle(color: Colors.white), // <-- Adicionei uma cor para garantir a legibilidade
+                                )),
                           )
                       ]),
                     )),
@@ -81,12 +84,13 @@ class _VerMidiaPageState extends State<VerMidiaPage> {
   }
 
   Widget _getItemMidia(ItemMidia item) {
+    Widget errorWidget = Icon(Icons.image_not_supported_outlined, color: Colors.white);
+
     switch (item.tipoMidia) {
       case TipoMidiaEnum.IMAGEM:
         if (item.url.isNullOrBlank && item.path.isNullOrBlank) {
           return Text('Falha ao carregar imagem');
         }
-        Widget errorWidget = Icon(Icons.image_not_supported_outlined);
         return PinchZoomImage(
           image:
               item.path?.isNullOrBlank == false && File(item.path!).existsSync()
@@ -105,6 +109,41 @@ class _VerMidiaPageState extends State<VerMidiaPage> {
                             )
                       : errorWidget,
         );
+
+      case TipoMidiaEnum.ARQUIVO:
+        if (item.path != null &&
+            item.path!.toLowerCase().endsWith('.pdf') &&
+            File(item.path!).existsSync()) {
+          return PDFView(
+            filePath: item.path!,
+            enableSwipe: true,
+            swipeHorizontal: true, // Para funcionar bem no carrossel
+            autoSpacing: false,
+            pageFling: false,
+            onError: (error) {
+              // CORREÇÃO: O callback onError é 'void', ele não
+              // pode retornar um widget.
+              // Apenas logamos o erro no console por enquanto.
+              print('Erro ao carregar PDF: $error');
+            },
+          );
+        } else {
+          // Se for outro tipo de arquivo que não seja PDF
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.insert_drive_file, color: Colors.white, size: 50),
+                SizedBox(height: 10),
+                Text(
+                  'Visualização não suportada para este arquivo.',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          );
+        }
+
       case TipoMidiaEnum.VIDEO:
         return Text(
           'Não implementado',
@@ -119,18 +158,19 @@ class _VerMidiaPageState extends State<VerMidiaPage> {
         }
 
       default:
-        return PinchZoomImage(
-          image: item.url.isNullOrBlank
-              ? Image.file(File(item.path!))
-              : UtilsPlatform.isWeb
-                  ? Image.network(item.url!)
-                  : CachedNetworkImage(
-                      imageUrl: item.url!,
-                      fit: BoxFit.contain,
-                      placeholder: (_, url) =>
-                          Center(child: CircularProgressIndicator()),
-                    ),
-        );
+        return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.help_outline, color: Colors.white, size: 50),
+                SizedBox(height: 10),
+                Text(
+                  'Tipo de mídia desconhecido.',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          );
     }
   }
 }
