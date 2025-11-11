@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:midia_select/models/item_midia.dart';
 import 'package:msk_utils/msk_utils.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart'; // <-- 1. Importe o pacote de PDF
+import 'package:flutter_pdfview/flutter_pdfview.dart'; 
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart'; 
 
 import 'ver_midia_controller.dart';
 import 'ver_midia_module.dart';
@@ -70,7 +71,7 @@ class _VerMidiaPageState extends State<VerMidiaPage> {
                                 alignment: Alignment.bottomCenter,
                                 child: Text(
                                   _controller.itens[realIndex].fileName!,
-                                  style: TextStyle(color: Colors.white), // <-- Adicionei uma cor para garantir a legibilidade
+                                  style: TextStyle(color: Colors.white), 
                                 )),
                           )
                       ]),
@@ -111,20 +112,29 @@ class _VerMidiaPageState extends State<VerMidiaPage> {
         );
 
       case TipoMidiaEnum.ARQUIVO:
-        if (item.path != null &&
+        // Verifica se o path existe e se é um arquivo PDF
+        bool isPdf = item.path != null &&
             item.path!.toLowerCase().endsWith('.pdf') &&
-            File(item.path!).existsSync()) {
+            File(item.path!).existsSync();
+
+        if (isPdf) {
+          if (UtilsPlatform.isWindows || UtilsPlatform.isWeb) {
+            return SfPdfViewer.file(
+              File(item.path!),
+              onDocumentLoadFailed: (details) {
+                print("Falha ao carregar PDF no Windows: ${details.description}");
+              },
+            );
+          }
+          
           return PDFView(
             filePath: item.path!,
             enableSwipe: true,
-            swipeHorizontal: true, // Para funcionar bem no carrossel
+            swipeHorizontal: true, 
             autoSpacing: false,
             pageFling: false,
             onError: (error) {
-              // CORREÇÃO: O callback onError é 'void', ele não
-              // pode retornar um widget.
-              // Apenas logamos o erro no console por enquanto.
-              print('Erro ao carregar PDF: $error');
+              print('Erro ao carregar PDF (nativo): $error');
             },
           );
         } else {

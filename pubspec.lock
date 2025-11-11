@@ -69,18 +69,18 @@ packages:
     dependency: transitive
     description:
       name: build_daemon
-      sha256: "409002f1adeea601018715d613115cfaf0e31f512cb80ae4534c79867ae2363d"
+      sha256: bf05f6e12cfea92d3c09308d7bcdab1906cd8a179b023269eed00c071004b957
       url: "https://pub.dev"
     source: hosted
-    version: "4.1.0"
+    version: "4.1.1"
   build_runner:
     dependency: "direct dev"
     description:
       name: build_runner
-      sha256: a9461b8e586bf018dd4afd2e13b49b08c6a844a4b226c8d1d10f3a723cdd78c3
+      sha256: "04f69b1502f66e22ae7990bbd01eb552b7f12793c4d3ea6e715d0ac5e98bcdac"
       url: "https://pub.dev"
     source: hosted
-    version: "2.10.1"
+    version: "2.10.2"
   built_collection:
     dependency: transitive
     description:
@@ -382,10 +382,10 @@ packages:
     dependency: transitive
     description:
       name: file_selector_platform_interface
-      sha256: a3994c26f10378a039faa11de174d7b78eb8f79e4dd0af2a451410c1a5c3f66b
+      sha256: "35e0bd61ebcdb91a3505813b055b09b79dfdc7d0aee9c09a7ba59ae4bb13dc85"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.2"
+    version: "2.7.0"
   file_selector_web:
     dependency: transitive
     description:
@@ -506,10 +506,10 @@ packages:
     dependency: transitive
     description:
       name: http
-      sha256: bb2ce4590bc2667c96f318d68cac1b5a7987ec819351d32b1c987239a815e007
+      sha256: "87721a4a50b19c7f1d49001e51409bddc46303966ce89a65af4f4e6004896412"
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.0"
+    version: "1.6.0"
   http_multi_server:
     dependency: transitive
     description:
@@ -799,6 +799,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  petitparser:
+    dependency: transitive
+    description:
+      name: petitparser
+      sha256: "1a97266a94f7350d30ae522c0af07890c70b8e62c71e8e3920d1db4d23c057d1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.1"
   pinch_zoom_image_last:
     dependency: "direct main"
     description:
@@ -1013,6 +1021,70 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      sha256: f1d2b52697543e13bdefdc62d15868124a265987577f53224a7dbe176c8448f0
+      url: "https://pub.dev"
+    source: hosted
+    version: "28.2.12"
+  syncfusion_flutter_pdf:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_pdf
+      sha256: f5e02ac4264bc69eeffa3ec54c9c0ad6e8a9f9161b105451b4a83dd1a317eaf9
+      url: "https://pub.dev"
+    source: hosted
+    version: "28.2.12"
+  syncfusion_flutter_pdfviewer:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_pdfviewer
+      sha256: d917f8b402634464a96b4bae6c79127aed389b036f89d4c0c24785e5c231012e
+      url: "https://pub.dev"
+    source: hosted
+    version: "28.1.37"
+  syncfusion_flutter_signaturepad:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_signaturepad
+      sha256: "30de4c9f77d1b75850697262bf9ce30b46a8d4401cec91dae95c4ee4e589d857"
+      url: "https://pub.dev"
+    source: hosted
+    version: "28.2.12"
+  syncfusion_pdfviewer_macos:
+    dependency: transitive
+    description:
+      name: syncfusion_pdfviewer_macos
+      sha256: c76af8dc3e8df38be3f5d7a78f4bae5ff9f5d73706da997d8428e087af418102
+      url: "https://pub.dev"
+    source: hosted
+    version: "28.2.12"
+  syncfusion_pdfviewer_platform_interface:
+    dependency: transitive
+    description:
+      name: syncfusion_pdfviewer_platform_interface
+      sha256: a9c102d1edd68fbe449e37021f5b82a8e32339023112807a828fb4e585e077cc
+      url: "https://pub.dev"
+    source: hosted
+    version: "28.2.12"
+  syncfusion_pdfviewer_web:
+    dependency: transitive
+    description:
+      name: syncfusion_pdfviewer_web
+      sha256: "6f2bf5c385e003e8f7312c445240c8648045400de9d7050df9d9a4b191c02568"
+      url: "https://pub.dev"
+    source: hosted
+    version: "28.2.12"
+  syncfusion_pdfviewer_windows:
+    dependency: transitive
+    description:
+      name: syncfusion_pdfviewer_windows
+      sha256: cf638a7d64bdd4120a8e27d944cb966a05a409ee3d0c24fa63e83341a535d6fb
+      url: "https://pub.dev"
+    source: hosted
+    version: "28.2.12"
   synchronized:
     dependency: transitive
     description:
@@ -1045,6 +1117,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  url_launcher:
+    dependency: transitive
+    description:
+      name: url_launcher
+      sha256: f6a7e5c4835bb4e3026a04793a4199ca2d14c739ec378fdfe23fc8075d0439f8
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.2"
+  url_launcher_android:
+    dependency: transitive
+    description:
+      name: url_launcher_android
+      sha256: "81777b08c498a292d93ff2feead633174c386291e35612f8da438d6e92c4447e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.20"
+  url_launcher_ios:
+    dependency: transitive
+    description:
+      name: url_launcher_ios
+      sha256: d80b3f567a617cb923546034cc94bfe44eb15f989fe670b37f26abdb9d939cb7
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.4"
   url_launcher_linux:
     dependency: transitive
     description:
@@ -1053,6 +1149,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
+  url_launcher_macos:
+    dependency: transitive
+    description:
+      name: url_launcher_macos
+      sha256: c043a77d6600ac9c38300567f33ef12b0ef4f4783a2c1f00231d2b1941fea13f
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.3"
   url_launcher_platform_interface:
     dependency: transitive
     description:
@@ -1157,6 +1261,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  xml:
+    dependency: transitive
+    description:
+      name: xml
+      sha256: "971043b3a0d3da28727e40ed3e0b5d18b742fa5a68665cca88e74b7876d5e025"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.6.1"
   yaml:
     dependency: transitive
     description:
