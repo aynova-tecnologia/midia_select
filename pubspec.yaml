@@ -17,6 +17,7 @@ dependencies:
   msk_utils:
     git:
       url: https://github.com/aynova-tecnologia/msk_utils.git
+      ref: timber-cargo-dependency-chain
   image_picker: ^1.1.2 
   flutter_mobx: ^2.0.2
   pinch_zoom_image_last: ^0.4.1
