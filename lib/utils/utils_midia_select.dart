@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +8,33 @@ import 'package:midia_select/models/item_midia.dart';
 import 'package:midia_select/modules/capture_photo/capture_photo_page.dart';
 import 'package:msk_utils/msk_utils.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class UtilsMidiaSelect {
+  /// Copia [arquivoOrigem] para dentro de uma subpasta persistente
+  /// (`fotos_pendentes` por padrão) de [diretorioDestino], com um nome único.
+  ///
+  /// O `image_picker` (Android, com `imageQuality` < 100) grava a foto
+  /// comprimida dentro do cache do app, que o sistema pode limpar a
+  /// qualquer momento — inclusive antes do fim do upload/sync. Copiar pra um
+  /// diretório persistente (ex.: `getApplicationDocumentsDirectory()`) logo
+  /// após a captura evita que o arquivo suma e vire uma foto órfã no
+  /// servidor (ver docs/BUG_FOTOS_CACHE.md no timber_track).
+  static Future<String> persistirArquivoMidia(
+    String arquivoOrigem, {
+    required Directory diretorioDestino,
+    String subpasta = 'fotos_pendentes',
+  }) async {
+    final String nomeUnico =
+        '${DateTime.now().microsecondsSinceEpoch}_${basename(arquivoOrigem)}';
+    final Directory dirFinal =
+        Directory(join(diretorioDestino.path, subpasta));
+    await dirFinal.create(recursive: true);
+    final File novo =
+        await File(arquivoOrigem).copy(join(dirFinal.path, nomeUnico));
+    return novo.path;
+  }
+
   /// Retorna um objeto ItemMidia de imagem
   static ItemMidia? getItemMidiaImage({
     String? path,
@@ -227,7 +254,12 @@ class UtilsMidiaSelect {
                     imageQuality: imageQuality,
                   );
                   if (image != null) {
-                    ItemMidia? item = getItemMidiaImage(path: image.path);
+                    String pathPersistente = await persistirArquivoMidia(
+                      image.path,
+                      diretorioDestino: await getApplicationDocumentsDirectory(),
+                    );
+                    ItemMidia? item =
+                        getItemMidiaImage(path: pathPersistente);
                     if (item != null) midiaAdded.call(item);
                   }
                 },
@@ -244,7 +276,12 @@ class UtilsMidiaSelect {
                     imageQuality: imageQuality,
                   );
                   if (image != null) {
-                    ItemMidia? item = getItemMidiaImage(path: image.path);
+                    String pathPersistente = await persistirArquivoMidia(
+                      image.path,
+                      diretorioDestino: await getApplicationDocumentsDirectory(),
+                    );
+                    ItemMidia? item =
+                        getItemMidiaImage(path: pathPersistente);
                     if (item != null) midiaAdded.call(item);
                   }
                 },
