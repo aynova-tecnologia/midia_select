@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:midia_select/models/item_midia.dart';
 import 'package:msk_utils/msk_utils.dart';
@@ -89,12 +90,17 @@ class _VerMidiaPageState extends State<VerMidiaPage> {
 
     switch (item.tipoMidia) {
       case TipoMidiaEnum.IMAGEM:
-        if (item.url.isNullOrBlank && item.path.isNullOrBlank) {
+        if (item.url.isNullOrBlank &&
+            item.path.isNullOrBlank &&
+            item.bytes == null) {
           return Text('Falha ao carregar imagem');
         }
         return PinchZoomImage(
-          image:
-              item.path?.isNullOrBlank == false && File(item.path!).existsSync()
+          image: kIsWeb && item.bytes != null
+              ? Image.memory(item.bytes!,
+                  errorBuilder: (_, obj, stack) => errorWidget)
+              : item.path?.isNullOrBlank == false &&
+                      File(item.path!).existsSync()
                   ? Image.file(File(item.path!),
                       errorBuilder: (_, obj, stack) => errorWidget)
                   : item.url?.isNullOrEmpty == false

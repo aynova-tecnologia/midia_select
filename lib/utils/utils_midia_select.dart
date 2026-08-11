@@ -1,23 +1,55 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:midia_select/models/item_midia.dart';
 import 'package:midia_select/modules/capture_photo/capture_photo_page.dart';
 import 'package:msk_utils/msk_utils.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class UtilsMidiaSelect {
+  /// Copia [arquivoOrigem] para dentro de uma subpasta persistente
+  /// (`fotos_pendentes` por padrÃ£o) de [diretorioDestino], com um nome Ãºnico.
+  ///
+  /// O `image_picker` (Android, com `imageQuality` < 100) grava a foto
+  /// comprimida dentro do cache do app, que o sistema pode limpar a
+  /// qualquer momento â€” inclusive antes do fim do upload/sync. Copiar pra um
+  /// diretÃ³rio persistente (ex.: `getApplicationDocumentsDirectory()`) logo
+  /// apÃ³s a captura evita que o arquivo suma e vire uma foto Ã³rfÃ£ no
+  /// servidor (ver docs/BUG_FOTOS_CACHE.md no timber_track).
+  static Future<String> persistirArquivoMidia(
+    String arquivoOrigem, {
+    required Directory diretorioDestino,
+    String subpasta = 'fotos_pendentes',
+  }) async {
+    final String nomeUnico =
+        '${DateTime.now().microsecondsSinceEpoch}_${basename(arquivoOrigem)}';
+    final Directory dirFinal =
+        Directory(join(diretorioDestino.path, subpasta));
+    await dirFinal.create(recursive: true);
+    final File novo =
+        await File(arquivoOrigem).copy(join(dirFinal.path, nomeUnico));
+    return novo.path;
+  }
+
   /// Retorna um objeto ItemMidia de imagem
   static ItemMidia? getItemMidiaImage({
     String? path,
     String? url,
+    Uint8List? bytes,
     dynamic obj,
     int? typeImage,
   }) {
     ItemMidia? itemMidia = getItemMidia(
       path: path,
       url: url,
+      bytes: bytes,
       obj: obj,
     );
     itemMidia?.tipoMidia = TipoMidiaEnum.IMAGEM;
@@ -25,7 +57,7 @@ class UtilsMidiaSelect {
     return itemMidia;
   }
 
-  /// Retorna um objeto ItemMidia de vídeo
+  /// Retorna um objeto ItemMidia de vÃ­deo
   static ItemMidia? getItemMidiaVideo({
     String? path,
     String? url,
@@ -40,7 +72,7 @@ class UtilsMidiaSelect {
     return itemMidia;
   }
 
-  /// Retorna um objeto ItemMidia de áudio
+  /// Retorna um objeto ItemMidia de Ã¡udio
   static ItemMidia? getItemMidiaAudio({
     String? path,
     String? url,
@@ -70,14 +102,15 @@ class UtilsMidiaSelect {
     return itemMidia;
   }
 
-  /// Método genérico para construir um ItemMidia
+  /// MÃ©todo genÃ©rico para construir um ItemMidia
   static ItemMidia? getItemMidia({
     String? path,
     String? url,
+    Uint8List? bytes,
     dynamic obj,
     int? id,
   }) {
-    if (path != null || url != null) {
+    if (path != null || url != null || bytes != null) {
       ItemMidia item = ItemMidia();
       item.strings = Map();
       if (path != null) {
@@ -85,6 +118,7 @@ class UtilsMidiaSelect {
       }
       item.path = path;
       item.url = url;
+      item.bytes = bytes;
       item.object = obj;
       item.id = id;
       return item;
@@ -92,7 +126,7 @@ class UtilsMidiaSelect {
     return null;
   }
 
-  /// Exibe opções de seleção de mídia (foto, vídeo, arquivo)
+  /// Exibe opÃ§Ãµes de seleÃ§Ã£o de mÃ­dia (foto, vÃ­deo, arquivo)
   static exibirOpcoesMidia(
     BuildContext buildContext,
     List<TipoMidiaEnum> tiposMidia,
@@ -154,7 +188,7 @@ class UtilsMidiaSelect {
                 ),
               if (tiposMidia.contains(TipoMidiaEnum.VIDEO))
                 ListTile(
-                  title: const Text('Vídeo'),
+                  title: const Text('VÃ­deo'),
                   leading: const Icon(Icons.videocam),
                   onTap: () {
                     Navigator.pop(context);
@@ -178,7 +212,7 @@ class UtilsMidiaSelect {
     }
   }
 
-  /// Seleciona imagem (foto da câmera ou galeria)
+  /// Seleciona imagem (foto da cÃ¢mera ou galeria)
   static Future<void> _exibirOpcoesFoto(
     BuildContext context,
     final Function(ItemMidia) midiaAdded, {
@@ -193,16 +227,21 @@ class UtilsMidiaSelect {
   }) async {
     if (!UtilsPlatform.isMobile) {
       try {
-        String ex = 'jpg, png, jpeg';
-        FilePickerCross filePickerCross =
-            await FilePickerCross.importFromStorage(
-          type: FileTypeCross.image,
-          fileExtension: ex,
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.image,
+          withData: true,
         );
-        String? path = filePickerCross.path;
-        ItemMidia? item = getItemMidiaImage(path: path);
-        if (item != null) {
-          midiaAdded.call(item);
+        if (result != null) {
+          PlatformFile file = result.files.single;
+          Uint8List? bytesCapturados = file.bytes;
+          if (bytesCapturados != null) {
+            String? path = kIsWeb ? null : file.path;
+            ItemMidia? item =
+                getItemMidiaImage(path: path, bytes: bytesCapturados);
+            if (item != null) {
+              midiaAdded.call(item);
+            }
+          }
         }
       } catch (e) {
         print(e);
@@ -216,7 +255,7 @@ class UtilsMidiaSelect {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: const Text('Câmera'),
+                title: const Text('CÃ¢mera'),
                 leading: const Icon(Icons.camera),
                 onTap: () async {
                   Navigator.pop(alertContext);
@@ -227,7 +266,12 @@ class UtilsMidiaSelect {
                     imageQuality: imageQuality,
                   );
                   if (image != null) {
-                    ItemMidia? item = getItemMidiaImage(path: image.path);
+                    String pathPersistente = await persistirArquivoMidia(
+                      image.path,
+                      diretorioDestino: await getApplicationDocumentsDirectory(),
+                    );
+                    ItemMidia? item =
+                        getItemMidiaImage(path: pathPersistente);
                     if (item != null) midiaAdded.call(item);
                   }
                 },
@@ -244,7 +288,12 @@ class UtilsMidiaSelect {
                     imageQuality: imageQuality,
                   );
                   if (image != null) {
-                    ItemMidia? item = getItemMidiaImage(path: image.path);
+                    String pathPersistente = await persistirArquivoMidia(
+                      image.path,
+                      diretorioDestino: await getApplicationDocumentsDirectory(),
+                    );
+                    ItemMidia? item =
+                        getItemMidiaImage(path: pathPersistente);
                     if (item != null) midiaAdded.call(item);
                   }
                 },
@@ -256,7 +305,7 @@ class UtilsMidiaSelect {
     }
   }
 
-  /// Seleciona vídeo
+  /// Seleciona vÃ­deo
   static Future<void> _exibirOpcoesVideo(
     BuildContext context,
     final Function(ItemMidia) midiaAdded,
