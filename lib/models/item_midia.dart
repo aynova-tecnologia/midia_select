@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:mobx/mobx.dart';
 import 'package:msk_utils/msk_utils.dart';
 
@@ -7,6 +9,7 @@ class ItemMidia extends _ItemMidia with _$ItemMidia {
   ItemMidia({
     String? url,
     String? path,
+    Uint8List? bytes,
     TipoMidiaEnum tipoMidia = TipoMidiaEnum.IMAGEM,
     dynamic controlador,
     String? fileName,
@@ -14,6 +17,7 @@ class ItemMidia extends _ItemMidia with _$ItemMidia {
   }) : super(
           path: path,
           url: url,
+          bytes: bytes,
           tipoMidia: tipoMidia,
           controlador: controlador,
           fileName: fileName,
@@ -24,6 +28,7 @@ class ItemMidia extends _ItemMidia with _$ItemMidia {
 abstract class _ItemMidia extends ItemSelect with Store {
   String? url;
   String? path;
+  Uint8List? bytes;
   String? fileName;
   int? typeImage;
   TipoMidiaEnum tipoMidia;
@@ -31,6 +36,7 @@ abstract class _ItemMidia extends ItemSelect with Store {
   _ItemMidia({
     this.path,
     this.url,
+    this.bytes,
     this.fileName,
     this.tipoMidia = TipoMidiaEnum.IMAGEM,
     this.controlador,

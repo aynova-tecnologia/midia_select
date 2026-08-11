@@ -1,5 +1,7 @@
 import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:midia_select/models/item_midia.dart';
@@ -115,7 +117,15 @@ class ItemMidiaWidget extends StatelessWidget {
   Widget _getImagem() {
     Widget errorWidget = Icon(Icons.image_not_supported_outlined);
 
-    if (controller.item?.path?.isNullOrBlank == false &&
+    if (kIsWeb && controller.item?.bytes != null) {
+      return Image.memory(
+        controller.item!.bytes!,
+        fit: BoxFit.cover,
+        width: width,
+        height: height,
+        errorBuilder: (_, object, stack) => errorWidget,
+      );
+    } else if (controller.item?.path?.isNullOrBlank == false &&
         File(controller.item!.path!).existsSync()) {
       return Image.file(
         File(controller.item!.path!),
