@@ -104,4 +104,69 @@ void main() {
       expect(pathPersistente.contains('fotos_pendentes'), false);
     });
   });
+
+  group('persistirOuManterOriginal', () {
+    test('sem falha, devolve o path persistido e não chama aoFalhar',
+        () async {
+      File original = File('${tempOrigem.path}/foto.jpg')
+        ..writeAsBytesSync([1, 2]);
+      bool falhou = false;
+
+      String resultado = await UtilsMidiaSelect.persistirOuManterOriginal(
+        original.path,
+        obterDiretorioDestino: () async => tempDestino,
+        aoFalhar: (_, __) => falhou = true,
+      );
+
+      expect(falhou, false);
+      expect(resultado, isNot(equals(original.path)));
+      expect(File(resultado).existsSync(), true);
+    });
+
+    test('falha da cópia: avisa e mantém o path original, sem lançar',
+        () async {
+      // Origem inexistente faz File.copy lançar, como acontece na prática
+      // com disco cheio.
+      String origem = '${tempOrigem.path}/nao_existe.jpg';
+      Object? erroRecebido;
+
+      String resultado = await UtilsMidiaSelect.persistirOuManterOriginal(
+        origem,
+        obterDiretorioDestino: () async => tempDestino,
+        aoFalhar: (erro, _) => erroRecebido = erro,
+      );
+
+      expect(resultado, origem,
+          reason: 'A captura não pode ser perdida: devolve o path original');
+      expect(erroRecebido, isNotNull);
+    });
+
+    test('aoFalhar que lança: ainda devolve o path original, sem lançar',
+        () async {
+      String origem = '${tempOrigem.path}/nao_existe.jpg';
+
+      String resultado = await UtilsMidiaSelect.persistirOuManterOriginal(
+        origem,
+        obterDiretorioDestino: () async => tempDestino,
+        aoFalhar: (_, __) => throw Exception('falha no aviso'),
+      );
+
+      expect(resultado, origem);
+    });
+
+    test('falha ao obter o diretório de destino também é tratada', () async {
+      File original = File('${tempOrigem.path}/foto.jpg')
+        ..writeAsBytesSync([1]);
+      Object? erroRecebido;
+
+      String resultado = await UtilsMidiaSelect.persistirOuManterOriginal(
+        original.path,
+        obterDiretorioDestino: () async => throw Exception('sem diretório'),
+        aoFalhar: (erro, _) => erroRecebido = erro,
+      );
+
+      expect(resultado, original.path);
+      expect(erroRecebido, isNotNull);
+    });
+  });
 }
