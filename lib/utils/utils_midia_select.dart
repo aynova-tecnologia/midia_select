@@ -35,6 +35,62 @@ class UtilsMidiaSelect {
     return novo.path;
   }
 
+  /// Persiste [arquivoOrigem] como [persistirArquivoMidia], mas nunca deixa a
+  /// exceção escapar: se a cópia falhar (ex.: sem espaço no aparelho), chama
+  /// [aoFalhar] e devolve o próprio [arquivoOrigem] (o arquivo do cache do
+  /// `image_picker`), para a foto capturada não sumir em silêncio. O arquivo
+  /// de cache pode ser limpo pelo sistema antes do envio, por isso quem chama
+  /// deve avisar o usuário em [aoFalhar].
+  @visibleForTesting
+  static Future<String> persistirOuManterOriginal(
+    String arquivoOrigem, {
+    required Future<Directory> Function() obterDiretorioDestino,
+    void Function(Object erro, StackTrace stackTrace)? aoFalhar,
+  }) async {
+    try {
+      return await persistirArquivoMidia(
+        arquivoOrigem,
+        diretorioDestino: await obterDiretorioDestino(),
+      );
+    } catch (erro, stackTrace) {
+      try {
+        aoFalhar?.call(erro, stackTrace);
+      } catch (erroAviso) {
+        // O aviso não pode custar a foto: o path original é sempre devolvido.
+        debugPrint('persistirOuManterOriginal: aoFalhar lançou: $erroAviso');
+      }
+      return arquivoOrigem;
+    }
+  }
+
+  /// Persiste a foto capturada em `fotos_pendentes`; se falhar, reporta ao
+  /// Sentry, avisa o usuário (SnackBar) e mantém o path original do
+  /// `image_picker` como melhor esforço.
+  static Future<String> _persistirFotoComAviso(
+    BuildContext context,
+    String arquivoOrigem,
+  ) {
+    return persistirOuManterOriginal(
+      arquivoOrigem,
+      obterDiretorioDestino: getApplicationDocumentsDirectory,
+      aoFalhar: (erro, stackTrace) {
+        UtilsSentry.reportError(erro, stackTrace,
+            data: {'origem': arquivoOrigem, 'etapa': 'persistirArquivoMidia'});
+        if (context.mounted) {
+          ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+            const SnackBar(
+              duration: Duration(seconds: 8),
+              content: Text(
+                  'Não foi possível salvar a foto com segurança (verifique o espaço livre no aparelho). '
+                  'Ela foi mantida, mas pode se perder se o aparelho limpar o cache antes do envio. '
+                  'Sincronize logo ou tire a foto novamente.'),
+            ),
+          );
+        }
+      },
+    );
+  }
+
   /// Retorna um objeto ItemMidia de imagem
   static ItemMidia? getItemMidiaImage({
     String? path,
@@ -254,10 +310,8 @@ class UtilsMidiaSelect {
                     imageQuality: imageQuality,
                   );
                   if (image != null) {
-                    String pathPersistente = await persistirArquivoMidia(
-                      image.path,
-                      diretorioDestino: await getApplicationDocumentsDirectory(),
-                    );
+                    String pathPersistente =
+                        await _persistirFotoComAviso(context, image.path);
                     ItemMidia? item =
                         getItemMidiaImage(path: pathPersistente);
                     if (item != null) midiaAdded.call(item);
@@ -276,10 +330,8 @@ class UtilsMidiaSelect {
                     imageQuality: imageQuality,
                   );
                   if (image != null) {
-                    String pathPersistente = await persistirArquivoMidia(
-                      image.path,
-                      diretorioDestino: await getApplicationDocumentsDirectory(),
-                    );
+                    String pathPersistente =
+                        await _persistirFotoComAviso(context, image.path);
                     ItemMidia? item =
                         getItemMidiaImage(path: pathPersistente);
                     if (item != null) midiaAdded.call(item);
